@@ -1,0 +1,18 @@
+{
+  "name": "live-scoreboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "CND-400 Node.js 20 scoreboard API, vanilla SPA, TypeScript CLI, and Playwright E2E suite.",
+  "scripts": {
+    "start": "node api/server.js",
+    "test": "node --test api/scoreboard.test.js",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "express": "^4.21.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.49.0"
+  }
+}

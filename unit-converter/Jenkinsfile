@@ -1,0 +1,32 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Test') {
+            steps {
+                sh '''
+                    if python3 -m pytest --version >/dev/null 2>&1; then
+                        python3 -m pytest -q
+                    else
+                        python3 -m venv .venv
+                        . .venv/bin/activate
+                        pip install --quiet --no-cache-dir -r requirements.txt
+                        pytest -q
+                    fi
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            deleteDir()
+        }
+    }
+}

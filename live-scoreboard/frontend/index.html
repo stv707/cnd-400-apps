@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CloudOps Live Scoreboard</title>
+  <style>
+    :root { font-family: system-ui, -apple-system, sans-serif; color: #0f172a; background: #f8fafc; }
+    main { max-width: 680px; margin: 2.5rem auto; padding: 1.5rem; background: #ffffff; border-radius: 10px; box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08); }
+    form { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+    input, button { padding: 0.55rem 0.75rem; font-size: 0.95rem; border-radius: 6px; border: 1px solid #cbd5e1; }
+    button { background: #2563eb; color: #ffffff; border-color: #2563eb; cursor: pointer; font-weight: 600; }
+    button.secondary { background: #e2e8f0; color: #1e293b; border-color: #cbd5e1; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 0.6rem; border-bottom: 1px solid #e2e8f0; }
+    #error-banner { color: #b91c1c; min-height: 1.25rem; margin-bottom: 0.75rem; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Live Scoreboard</h1>
+    <form id="score-form">
+      <input id="team-name" data-testid="team-input" type="text" placeholder="Team name" required />
+      <input id="points-input" data-testid="points-input" type="number" step="1" placeholder="Points" required />
+      <button id="submit-score" data-testid="submit-score" type="submit">Record Score</button>
+      <button id="reset-board" data-testid="reset-board" type="button" class="secondary">Reset</button>
+    </form>
+    <div id="error-banner" role="alert"></div>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Team</th>
+          <th>Points</th>
+        </tr>
+      </thead>
+      <tbody id="leaderboard-body"></tbody>
+    </table>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

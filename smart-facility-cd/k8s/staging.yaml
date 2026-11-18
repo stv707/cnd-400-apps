@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-facility
+  namespace: staging
+  labels:
+    app: smart-facility
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smart-facility
+  template:
+    metadata:
+      labels:
+        app: smart-facility
+    spec:
+      containers:
+        - name: smart-facility
+          image: ${IMAGE_URI}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_VERSION
+              value: "${APP_VERSION}"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 192Mi
+            limits:
+              cpu: 400m
+              memory: 384Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-facility
+  namespace: staging
+spec:
+  selector:
+    app: smart-facility
+  ports:
+    - port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: smart-facility
+  namespace: staging
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - smart-facility-staging.apps.${STUDENT_DOMAIN}
+      secretName: smart-facility-staging-tls
+  rules:
+    - host: smart-facility-staging.apps.${STUDENT_DOMAIN}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: smart-facility
+                port:
+                  number: 80

@@ -1,0 +1,5 @@
+# Enforce Unix line endings across all platforms
+*.sh text eol=lf
+*.py text eol=lf
+Jenkinsfile* text eol=lf
+Dockerfile* text eol=lf

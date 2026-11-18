@@ -1,0 +1,96 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-facility-blue
+  namespace: prod
+  labels:
+    app: smart-facility
+    slot: blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smart-facility
+      slot: blue
+  template:
+    metadata:
+      labels:
+        app: smart-facility
+        slot: blue
+    spec:
+      containers:
+        - name: smart-facility
+          image: ${BLUE_IMAGE_URI}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_VERSION
+              value: "blue"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 192Mi
+            limits:
+              cpu: 400m
+              memory: 384Mi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smart-facility-green
+  namespace: prod
+  labels:
+    app: smart-facility
+    slot: green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: smart-facility
+      slot: green
+  template:
+    metadata:
+      labels:
+        app: smart-facility
+        slot: green
+    spec:
+      containers:
+        - name: smart-facility
+          image: ${GREEN_IMAGE_URI}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: APP_VERSION
+              value: "green"
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 100m
+              memory: 192Mi
+            limits:
+              cpu: 400m
+              memory: 384Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smart-facility
+  namespace: prod
+spec:
+  selector:
+    app: smart-facility
+    slot: ${ACTIVE_SLOT}
+  ports:
+    - port: 80
+      targetPort: 8080

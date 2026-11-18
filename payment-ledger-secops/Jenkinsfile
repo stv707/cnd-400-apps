@@ -1,0 +1,40 @@
+pipeline {
+    agent any
+
+    options {
+        timeout(time: 10, unit: 'MINUTES')
+    }
+
+    environment {
+        APP_NAME = 'payment-ledger'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Build & Test') {
+            steps {
+                timeout(time: 3, unit: 'MINUTES') {
+                    sh 'mvn -B test'
+                }
+            }
+        }
+
+        stage('Package JAR') {
+            steps {
+                sh 'mvn -B package -DskipTests'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+            deleteDir()
+        }
+    }
+}

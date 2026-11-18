@@ -1,0 +1,26 @@
+# Java / Maven
+target/
+*.jar
+*.war
+*.class
+
+# Node.js / TypeScript / Playwright
+node_modules/
+dist/
+playwright-report/
+test-results/
+
+# Python
+__pycache__/
+.pytest_cache/
+.venv/
+*.pyc
+*.pyo
+
+# Local secrets & OS metadata
+.env
+.env.*
+*.key
+*.pem
+.DS_Store
+Thumbs.db

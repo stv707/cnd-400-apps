@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    environment {
+        APP_NAME = 'smart-facility'
+        IMAGE_TAG = "1.0.${BUILD_NUMBER}"
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Unit & Integration Tests') {
+            steps {
+                sh 'mvn -B test'
+            }
+        }
+
+        stage('Package JAR') {
+            steps {
+                sh 'mvn -B package -DskipTests'
+            }
+        }
+    }
+
+    post {
+        always {
+            junit allowEmptyResults: true, testResults: 'target/surefire-reports/*.xml'
+            deleteDir()
+        }
+    }
+}

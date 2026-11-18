@@ -1,0 +1,30 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'NAMESPACE', defaultValue: 'prod', description: 'Target Kubernetes namespace')
+        string(name: 'IMAGE_URI', defaultValue: '', description: 'Full registry image URI and verified good tag to restore')
+    }
+
+    stages {
+        stage('Validate Parameters') {
+            steps {
+                script {
+                    if (!params.IMAGE_URI?.trim()) {
+                        error('IMAGE_URI parameter is required for rollback')
+                    }
+                }
+            }
+        }
+
+        stage('Rollback Kubernetes Deployment') {
+            steps {
+                sh '''
+                    kubectl -n "${NAMESPACE}" set image deployment/payment-ledger \
+                        payment-ledger="${IMAGE_URI}"
+                    kubectl -n "${NAMESPACE}" rollout status deployment/payment-ledger --timeout=180s
+                '''
+            }
+        }
+    }
+}
